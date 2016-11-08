@@ -188,7 +188,7 @@ export const updateEntity = (entity, {
           data: entity
         })
       }).then(json => {
-        dispatch(apiUpdated(json.data));
+        dispatch(apiUpdated(json));
         onSuccess(json);
         resolve(json);
       }).catch(error => {
@@ -330,8 +330,8 @@ export const reducer = handleActions({
   [API_UPDATED]: (rawState, { payload: rawEntities }) => {
     const state = Imm.fromJS(rawState);
     const entities = Imm.fromJS(
-      Array.isArray(rawEntities) ? rawEntities : [rawEntities]
-    );
+      Array.isArray(rawEntities.data) ? rawEntities.data : [rawEntities.data]
+    ).concat(Imm.fromJS(rawEntities.included || []));
 
     return updateOrInsertEntitiesIntoState(state, entities)
       .update('isUpdating', v => v - 1)
